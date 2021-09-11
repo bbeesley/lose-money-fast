@@ -10,6 +10,7 @@ WORKDIR /home/node/app
 
 COPY package.json package.json
 COPY package-lock.json package-lock.json
+COPY src src
 
 RUN chown -R node:node /home/node/app
 

@@ -163,4 +163,5 @@ Temporary Items
 dist
 
 # order book
+user_data
 order-book.json

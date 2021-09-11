@@ -17,7 +17,7 @@ let completedTrades: CompletedTrades;
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const pointer = resolve(__dirname, '../', ORDERS_FILE);
+const pointer = resolve(__dirname, '../user_data', ORDERS_FILE);
 
 async function saveState() {
   await writeFile(

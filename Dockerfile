@@ -14,8 +14,7 @@ COPY package-lock.json package-lock.json
 RUN chown -R node:node /home/node/app
 
 USER node
-RUN npm ci --production \
-    && rm .npmrc
+RUN npm ci --production
 
 FROM node:fermium-alpine
 

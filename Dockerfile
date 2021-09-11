@@ -5,12 +5,9 @@ RUN apk update && apk upgrade && \
     apk add --no-cache make gcc g++ python
 
 
-RUN mkdir /home/node/app
+COPY . /home/node/app
 WORKDIR /home/node/app
 
-COPY package.json package.json
-COPY package-lock.json package-lock.json
-COPY src src
 
 RUN chown -R node:node /home/node/app
 
@@ -27,9 +24,10 @@ USER node
 RUN mkdir ~/app
 WORKDIR /home/node/app
 
-COPY --from=builder /home/node/app/dist ./dist/
 COPY package.json package.json
 RUN mkdir /home/node/app/node_modules
+RUN mkdir /home/node/app/dist
+COPY --from=builder /home/node/app/dist ./dist/
 COPY --from=builder /home/node/app/node_modules ./node_modules/
 
 CMD /usr/local/bin/npm start

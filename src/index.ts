@@ -44,7 +44,7 @@ async function start(): Promise<void> {
         }
       }
       await delay(RUN_EVERY);
-      if (lastHeartbeat + 1e3 * HEARTBEAT_MINUTES < Date.now()) {
+      if (lastHeartbeat + 60e3 * HEARTBEAT_MINUTES < Date.now()) {
         lastHeartbeat = Date.now();
         const now = new Date();
         console.info(

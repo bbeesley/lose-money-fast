@@ -14,7 +14,7 @@ COPY package-lock.json package-lock.json
 RUN chown -R node:node /home/node/app
 
 USER node
-RUN npm ci --production
+RUN npm ci && npm run compile && npm prune --production
 
 FROM node:fermium-alpine
 
@@ -26,7 +26,7 @@ USER node
 RUN mkdir ~/app
 WORKDIR /home/node/app
 
-COPY dist dist
+COPY --from=builder /home/node/app/dist ./dist/
 COPY package.json package.json
 RUN mkdir /home/node/app/node_modules
 COPY --from=builder /home/node/app/node_modules ./node_modules/

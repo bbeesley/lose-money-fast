@@ -10,6 +10,7 @@ export async function shouldSell(order: OrderResponseFull): Promise<boolean> {
   const peakPrice = order.peakPrice ?? originalPrice;
   const livePrice = await getLivePrice(order.symbol);
   if (livePrice > (peakPrice ?? originalPrice)) {
+    console.info(`updating ${order.symbol} peak price to ${livePrice}`);
     await saveTrade({ ...order, peakPrice: livePrice });
     return false;
   }

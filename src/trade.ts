@@ -8,9 +8,8 @@ const client = getClient();
 export async function placeOrder(
   orderParams: NewSpotOrderParams,
 ): Promise<OrderResponseFull> {
-  console.log(JSON.stringify(orderParams, null, 2));
   const res = (await client.submitNewOrder(orderParams)) as OrderResponseFull;
-  console.log(JSON.stringify(res, null, 2));
+  console.info('placed order', JSON.stringify(res, null, 2));
   return {
     ...res,
     price: res.fills[0].price,

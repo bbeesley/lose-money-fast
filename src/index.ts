@@ -21,9 +21,9 @@ async function start(): Promise<void> {
             symbol,
             toFloat(order.executedQty),
           );
-          console.log(JSON.stringify(sellOrder));
+          console.info(`selling ${symbol}`, JSON.stringify(sellOrder));
           const receipt = await placeOrder(sellOrder);
-          console.log(JSON.stringify(receipt));
+          console.info(`sold ${symbol}`, JSON.stringify(receipt));
           await completeTrade(receipt);
         }
       }

@@ -30,7 +30,7 @@
     "clean": "rm -rf dist || true",
     "compile:mjs": "babel src --out-dir dist --extensions '.ts,.cjs,.mjs' --ignore '**/*.test.ts' --ignore '**/test-data/*' --out-file-extension '.mjs'",
     "precompile": "npm run clean",
-    "compile": "npm run compile:mjs && tsc --emitDeclarationOnly",
+    "compile": "npm run compile:mjs",
     "dependabump": "ncu -u && rm -rf package-lock.json node_modules | true && npm i",
     "lint": "tsc --noEmit && eslint --ext '.ts' src/",
     "test": "jest --passWithNoTests",

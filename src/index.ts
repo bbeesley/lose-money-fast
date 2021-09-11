@@ -9,8 +9,7 @@ import { RUN_EVERY } from './config';
 
 async function start(): Promise<void> {
   console.info('starting');
-  let run = true;
-  while (run) {
+  while (true) {
     try {
       const openTrades = await getOrders();
       for (const [symbol, order] of Object.entries(openTrades)) {
@@ -44,7 +43,6 @@ async function start(): Promise<void> {
       await delay(RUN_EVERY);
     } catch (err) {
       console.error(err);
-      run = false;
     }
   }
 }

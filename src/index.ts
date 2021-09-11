@@ -5,7 +5,10 @@ import { completeTrade, getOrders, saveTrade } from './data-store';
 import { placeOrder } from './trade';
 import { toFloat } from './util';
 import { shouldSell } from './calculate-position';
-import { RUN_EVERY } from './config';
+import { HEARTBEAT_MINUTES, RUN_EVERY } from './config';
+
+const startTime = new Date();
+let lastHeartbeat = Date.now();
 
 async function start(): Promise<void> {
   console.info('starting');
@@ -41,6 +44,13 @@ async function start(): Promise<void> {
         }
       }
       await delay(RUN_EVERY);
+      if (lastHeartbeat + 1e3 * HEARTBEAT_MINUTES < Date.now()) {
+        lastHeartbeat = Date.now();
+        const now = new Date();
+        console.info(
+          `successfully completed a run at ${now.toISOString()}, running since ${startTime.toISOString()}`,
+        );
+      }
     } catch (err) {
       console.error(err);
     }

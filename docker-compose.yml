@@ -1,0 +1,24 @@
+---
+version: '3'
+services:
+  freqtrade:
+    image: lose-money-fast:latest
+    restart: unless-stopped
+    container_name: lose-money-fast-app
+    privileged: true
+    volumes:
+      - "/volume/home/me/src/lose-money-fast/user_data:/opt/app/user_data"
+    environment:
+      - PUID=1010
+      - PGID=100
+      - API_KEY=api
+      - API_SECRET=secret
+      - TZ=Europe/London
+      - STAKE_AMOUNT=15
+      - PAIRING=USDT
+      - RUN_EVERY=300
+      - SL=0.1
+      - TSL=0.05
+      - ORDERS_FILE=order-book.json
+      - HEARTBEAT_MINUTES=10
+

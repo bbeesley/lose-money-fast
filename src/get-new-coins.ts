@@ -5,13 +5,19 @@ import { alreadyTraded } from './data-store';
 
 let coinList: string[] = [];
 
+const client = getClient();
+
 async function getCoinList() {
-  const client = getClient();
   const coins = (await client.getSymbolPriceTicker()) as SymbolPrice[];
   return coins
     .map((c) => c.symbol)
     .filter((c) => c.endsWith(PAIRING))
     .sort((a, b) => a.localeCompare(b));
+}
+
+export async function getRandomCoinPair(): Promise<string> {
+  const coins = await getCoinList();
+  return coins.sort(() => (Math.random() > 0.5 ? 1 : -1)).pop() as string;
 }
 
 export async function getNewCoins(): Promise<string[]> {

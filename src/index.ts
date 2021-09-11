@@ -3,12 +3,12 @@ import { calculateBuy, calculateSell } from './calculate-order';
 import { getNewCoins } from './get-new-coins';
 import { completeTrade, getOrders, saveTrade } from './data-store';
 import { placeOrder } from './trade';
-import { toFloat } from './util';
+import { healthCheck, toFloat } from './util';
 import { shouldSell } from './calculate-position';
 import { HEARTBEAT_MINUTES, RUN_EVERY } from './config';
 
 const startTime = new Date();
-let lastHeartbeat = Date.now();
+let lastHeartbeat: number;
 
 async function start(): Promise<void> {
   console.info('starting');
@@ -44,12 +44,26 @@ async function start(): Promise<void> {
         }
       }
       await delay(RUN_EVERY);
-      if (lastHeartbeat + 60e3 * HEARTBEAT_MINUTES < Date.now()) {
+      if (
+        !lastHeartbeat ||
+        lastHeartbeat + 60e3 * HEARTBEAT_MINUTES < Date.now()
+      ) {
         lastHeartbeat = Date.now();
-        const now = new Date();
-        console.info(
-          `successfully completed a run at ${now.toISOString()}, running since ${startTime.toISOString()}`,
-        );
+        console.info('running healthcheck');
+        healthCheck()
+          .then(() => {
+            const now = new Date();
+            console.info(
+              `successfully completed a run at ${now.toISOString()}, running since ${startTime.toISOString()}`,
+            );
+          })
+          .catch((e) => {
+            const now = new Date();
+            console.error(
+              `encountered an error while running healthcheck at ${now.toISOString()}`,
+              e,
+            );
+          });
       }
     } catch (err) {
       console.error(err);

@@ -17,7 +17,14 @@ async function getCoinList() {
 
 export async function getRandomCoinPair(): Promise<string> {
   const coins = await getCoinList();
-  return coins.sort(() => (Math.random() > 0.5 ? 1 : -1)).pop() as string;
+  const marketData = await client.getExchangeInfo();
+  return coins
+    .filter((symbol) => {
+      const pairData = marketData.symbols.find((d) => d.symbol === symbol);
+      return pairData?.status === 'TRADING';
+    })
+    .sort(() => (Math.random() > 0.5 ? 1 : -1))
+    .pop() as string;
 }
 
 export async function getNewCoins(): Promise<string[]> {
@@ -26,9 +33,19 @@ export async function getNewCoins(): Promise<string[]> {
     return [];
   }
   const latestCoinList = await getCoinList();
-  const newCoins = latestCoinList.filter(
-    (c) => !coinList.includes(c) && !alreadyTraded(c),
-  );
-  coinList = latestCoinList;
+  const newCoins = latestCoinList.filter((c) => {
+    return !coinList.includes(c) && !alreadyTraded(c);
+  });
+  if (newCoins.length > 0) {
+    const marketData = await client.getExchangeInfo();
+    const newCoinsAvailableToTrade = newCoins.filter((symbol) => {
+      const pairData = marketData.symbols.find((d) => d.symbol === symbol);
+      return pairData?.status === 'TRADING';
+    });
+    if (newCoinsAvailableToTrade.length === newCoins.length) {
+      coinList = latestCoinList;
+    }
+    return newCoinsAvailableToTrade;
+  }
   return newCoins;
 }

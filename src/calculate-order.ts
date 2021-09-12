@@ -10,9 +10,15 @@ const client = getClient();
 async function getTradeQuantity(
   symbol: string,
   desiredCoins: number,
-): Promise<number> {
+): Promise<number | false> {
   const marketData = await client.getExchangeInfo();
   const pairData = marketData.symbols.find((d) => d.symbol === symbol);
+  if (pairData?.status !== 'TRADING') {
+    console.warn(
+      `unable to place ${symbol} order as market status is not "TRADING", status: "${pairData?.status}"`,
+    );
+    return false;
+  }
   const lotSizeData = pairData?.filters.find(
     (f) => f.filterType === 'LOT_SIZE',
   ) as SymbolLotSizeFilter | undefined;
@@ -44,6 +50,8 @@ export async function calculateBuy(
   const price = await getLivePrice(symbol);
   const desiredCoins = STAKE_AMOUNT / price;
   const quantity = await getTradeQuantity(symbol, desiredCoins);
+  if (quantity === false)
+    throw new Error(`unable to create a buy order for ${symbol}`);
   return {
     symbol,
     side: 'BUY',
@@ -58,6 +66,8 @@ export async function calculateSell(
   desiredCoins: number,
 ): Promise<NewSpotOrderParams> {
   const quantity = await getTradeQuantity(symbol, desiredCoins);
+  if (quantity === false)
+    throw new Error(`unable to create a sell order for ${symbol}`);
   return {
     symbol,
     side: 'SELL',

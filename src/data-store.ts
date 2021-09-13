@@ -10,7 +10,7 @@ import {
   OrderResponseFull,
   Orders,
 } from './@types';
-import { ORDERS_FILE } from './config';
+import { ORDERS_FILE, PAIRING } from './config';
 
 let orders: Orders;
 let completedTrades: CompletedTrades;
@@ -54,12 +54,17 @@ export async function completeTrade(sell: OrderResponseFull): Promise<void> {
   await ensureDataStore();
   const buy = orders[sell.symbol];
   const roiBugNumber = evaluate(
-    `( 100 * (${sell.cummulativeQuoteQty} - ${buy.cummulativeQuoteQty}) / ${buy.cummulativeQuoteQty})`,
+    `( 100 * (${sell.price} - ${buy.price}) / ${buy.price})`,
   );
+  const stake = evaluate(`${buy.price} * ${buy.executedQty}`) as number;
+  const returns = evaluate(`${sell.price} * ${sell.executedQty}`) as number;
+  const profit = returns - stake;
+
   const result = {
-    stake: buy.cummulativeQuoteQty,
-    return: sell.cummulativeQuoteQty,
-    roi: `${roiBugNumber.toDecimalPlaces(2)}%`,
+    stake,
+    returns,
+    profit: `${profit} ${PAIRING}`,
+    roi: `${roiBugNumber.toPrecision(sell.price.toString().length)}%`,
   };
   completedTrades[sell.symbol] = { buy, sell, result };
   delete orders[sell.symbol];

@@ -6,7 +6,12 @@ export type Orders = Record<string, OrderResponseFull>;
 export interface CompletedTrade {
   buy: OrderResponseFull;
   sell: OrderResponseFull;
-  result: { stake: numberInString; return: numberInString; roi: string };
+  result: {
+    stake: numberInString;
+    returns: numberInString;
+    profit: string;
+    roi: string;
+  };
 }
 
 export type CompletedTrades = Record<string, CompletedTrade>;

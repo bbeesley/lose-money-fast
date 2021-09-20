@@ -37,6 +37,7 @@ export async function getNewCoins(): Promise<string[]> {
     return !coinList.includes(c) && !alreadyTraded(c);
   });
   if (newCoins.length > 0) {
+    console.info('found new coins', JSON.stringify(newCoins, null, 2));
     const marketData = await client.getExchangeInfo();
     const newCoinsAvailableToTrade = newCoins.filter((symbol) => {
       const pairData = marketData.symbols.find((d) => d.symbol === symbol);
@@ -45,7 +46,7 @@ export async function getNewCoins(): Promise<string[]> {
     if (newCoinsAvailableToTrade.length === newCoins.length) {
       coinList = latestCoinList;
     }
-    return newCoinsAvailableToTrade;
+    return newCoins;
   }
   return newCoins;
 }
